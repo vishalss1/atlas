@@ -1,0 +1,58 @@
+# Build Directories
+build/
+build*/
+out/
+bin/
+
+# CMake Generated Files
+CMakeCache.txt
+CMakeFiles/
+CMakeUserPresets.json
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# MSVC / Compiler Output & Build Artifacts
+*.obj
+*.o
+*.lib
+*.a
+*.dll
+*.so
+*.dylib
+*.exe
+*.pdb
+*.ilk
+*.exp
+*.idb
+*.gch
+*.pch
+*.tlog
+*.log
+
+# Dependency Management (vcpkg)
+vcpkg_installed/
+
+# Visual Studio & IDEs
+.vs/
+.vscode/
+*.sln
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
+*.suo
+*.user
+.idea/
+*.swp
+*.swo
+
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Documentation & AI Context
+CLAUDE.md
+docs/
