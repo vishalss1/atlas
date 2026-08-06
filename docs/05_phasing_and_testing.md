@@ -35,13 +35,19 @@ Current Codebase Status: **Phase 4 (Hardening & Verification) Completed**
 - [x] ICMP Destination Unreachable (Type 3) error generation.
 - [x] GoogleTest functional test suite (`tests/unit/test_icmp.cpp`).
 
+### Advanced Milestones — **[COMPLETED]**
+- [x] **Stateful Connection Tracking (`conntrack`)**: 5-tuple TCP/UDP state tracking table (`src/firewall/conntrack.cpp`).
+- [x] **Multi-Threaded Worker Pool**: Concurrent packet processing pool (`src/forwarding/worker_pool.cpp`).
+- [x] **IPv6 Protocol Engine**: 128-bit IPv6 address types & 40-byte header parser/builder (`src/ipv6/ipv6.cpp`).
+- [x] **ICMPv6 NDP Cache**: Neighbor Discovery Protocol resolution table (`src/ndp/ndp.cpp`).
+
 ---
 
 ## Testing Strategy
 
 ### 1. Unit Tests (`tests/unit/`, GoogleTest)
 - Pure functional test cases using hand-crafted byte arrays (`std::array<std::byte, N>`).
-- Test suites active: `ConfigTest`, `EthernetTest`, `IPv4Test`, `RoutingTest`, `ArpTest`, `FirewallTest`, `NatTest`, `IcmpTest`, `ForwardingTest` (21 tests passing).
+- Test suites active: `ConfigTest`, `EthernetTest`, `IPv4Test`, `RoutingTest`, `ArpTest`, `FirewallTest`, `ConntrackTest`, `NatTest`, `IcmpTest`, `IPv6Test`, `NdpTest`, `WorkerPoolTest`, `ForwardingTest` (26 tests passing).
 
 ### 2. Integration Tests (`tests/integration/`, GoogleTest)
 - Multi-interface topology testing using `FakeInterface` pairs.

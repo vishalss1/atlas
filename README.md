@@ -327,7 +327,9 @@ Atlas uses a multi-tiered testing methodology:
 - [x] **Phase 3: Policy Engine (COMPLETED)** — 5-tuple stateless firewall filtering (`src/firewall/`), NAPT / Source NAT with connection tracking and L4 checksum rewriting (`src/nat/`).
 - [x] **Phase 4: Hardening & Verification (COMPLETED)** — Multi-interface synthetic pipeline integration test suite (`tests/integration/`), LLVM parser fuzzing targets (`tests/fuzz/`), ASan build options.
 - [x] **Phase 5: Control Plane (COMPLETED)** — ICMP Echo Request / Reply ping handler (`src/icmp/`), ICMP Time Exceeded (TTL Expired in Transit) generation, ICMP Destination Unreachable notifications.
-- [ ] **Future Milestones** — Stateful firewall conntrack integration, multi-threaded worker loop, IPv6 support.
+- [x] **Stateful Conntrack (COMPLETED)** — 5-tuple TCP/UDP flow tracking (`src/firewall/conntrack.cpp`) with automatic state transitions and idle flow expiration sweeps.
+- [x] **Multi-Threaded Worker Pool (COMPLETED)** — Concurrent worker pool execution (`src/forwarding/worker_pool.cpp`) dispatching packet batches across CPU cores.
+- [x] **IPv6 Protocol Engine & NDP (COMPLETED)** — 128-bit IPv6 address representations (`src/packet/address_v6.cpp`), 40-byte IPv6 header parsing/building (`src/ipv6/ipv6.cpp`), and ICMPv6 Neighbor Discovery Protocol cache (`src/ndp/ndp.cpp`).
 
 ---
 

@@ -78,10 +78,16 @@ if(NOT GTest_FOUND)
 endif()
 
 # Subsystem Targets
-# Header-only interface target for packet definitions
-add_library(atlas_packet INTERFACE)
-target_include_directories(atlas_packet INTERFACE src include)
-target_link_libraries(atlas_packet INTERFACE fmt::fmt)
+# Subsystem Targets
+add_library(atlas_packet STATIC
+    include/atlas/packet/address.hpp
+    include/atlas/packet/address_v6.hpp
+    src/packet/address_v6.cpp
+    include/atlas/packet/packet.hpp
+    include/atlas/packet/result.hpp
+)
+target_include_directories(atlas_packet PUBLIC include src)
+target_link_libraries(atlas_packet PUBLIC fmt::fmt)
 
 add_library(atlas_config STATIC
     include/atlas/config/config.hpp
@@ -103,6 +109,20 @@ add_library(atlas_ipv4 STATIC
 )
 target_include_directories(atlas_ipv4 PUBLIC include src)
 target_link_libraries(atlas_ipv4 PUBLIC atlas_packet)
+
+add_library(atlas_ipv6 STATIC
+    include/atlas/ipv6/ipv6.hpp
+    src/ipv6/ipv6.cpp
+)
+target_include_directories(atlas_ipv6 PUBLIC include src)
+target_link_libraries(atlas_ipv6 PUBLIC atlas_packet)
+
+add_library(atlas_ndp STATIC
+    include/atlas/ndp/ndp.hpp
+    src/ndp/ndp.cpp
+)
+target_include_directories(atlas_ndp PUBLIC include src)
+target_link_libraries(atlas_ndp PUBLIC atlas_packet atlas_ipv6)
 
 add_library(atlas_interfaces STATIC
     include/atlas/interfaces/interface.hpp
@@ -132,6 +152,8 @@ target_link_libraries(atlas_arp PUBLIC atlas_packet atlas_ethernet atlas_interfa
 add_library(atlas_firewall STATIC
     include/atlas/firewall/firewall.hpp
     src/firewall/firewall.cpp
+    include/atlas/firewall/conntrack.hpp
+    src/firewall/conntrack.cpp
 )
 target_include_directories(atlas_firewall PUBLIC include src)
 target_link_libraries(atlas_firewall PUBLIC atlas_packet)
@@ -153,9 +175,11 @@ target_link_libraries(atlas_icmp PUBLIC atlas_packet)
 add_library(atlas_forwarding STATIC
     include/atlas/forwarding/forwarding.hpp
     src/forwarding/forwarding.cpp
+    include/atlas/forwarding/worker_pool.hpp
+    src/forwarding/worker_pool.cpp
 )
 target_include_directories(atlas_forwarding PUBLIC include src)
-target_link_libraries(atlas_forwarding PUBLIC atlas_packet atlas_ethernet atlas_ipv4 atlas_routing atlas_arp atlas_interfaces atlas_firewall atlas_nat atlas_icmp spdlog::spdlog)
+target_link_libraries(atlas_forwarding PUBLIC atlas_packet atlas_ethernet atlas_ipv4 atlas_routing atlas_arp atlas_interfaces atlas_firewall atlas_nat atlas_icmp atlas_ipv6 atlas_ndp spdlog::spdlog)
 
 # Main Executable Target
 add_executable(atlas src/main.cpp)
@@ -164,6 +188,8 @@ target_link_libraries(atlas PRIVATE
     atlas_config
     atlas_ethernet
     atlas_ipv4
+    atlas_ipv6
+    atlas_ndp
     atlas_interfaces
     atlas_routing
     atlas_arp
@@ -184,8 +210,12 @@ add_executable(atlas_tests
     tests/unit/test_routing.cpp
     tests/unit/test_arp.cpp
     tests/unit/test_firewall.cpp
+    tests/unit/test_conntrack.cpp
     tests/unit/test_nat.cpp
     tests/unit/test_icmp.cpp
+    tests/unit/test_ipv6.cpp
+    tests/unit/test_ndp.cpp
+    tests/unit/test_worker_pool.cpp
     tests/unit/test_forwarding.cpp
 )
 target_link_libraries(atlas_tests PRIVATE
@@ -193,6 +223,8 @@ target_link_libraries(atlas_tests PRIVATE
     atlas_config
     atlas_ethernet
     atlas_ipv4
+    atlas_ipv6
+    atlas_ndp
     atlas_interfaces
     atlas_routing
     atlas_arp
