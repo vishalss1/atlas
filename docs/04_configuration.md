@@ -1,3 +1,10 @@
+# Configuration System
+
+Atlas uses JSON format (`nlohmann/json`) for runtime network configuration.
+
+## Sample Configuration (`config.json`)
+
+```json
 {
   "interfaces": {
     "eth0": {
@@ -32,3 +39,13 @@
   "arp": { "cache_ttl": "300s" },
   "logging": { "level": "info" }
 }
+```
+
+---
+
+## Validation Strategy
+The `config::load(path)` parser executes strict validation prior to engine startup:
+1. **Interface Check:** Verifies all referenced interfaces exist and specify valid Npcap device GUIDs.
+2. **Route Integrity:** Verifies routes reference declared interfaces and valid CIDR blocks.
+3. **NAT Rules:** Ensures `outside_ip` is valid and port ranges are non-inverted (`start <= end`).
+4. **Firewall Rules:** Verifies valid protocols (`tcp`, `udp`, `icmp`, `all`) and port bounds.
