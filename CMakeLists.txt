@@ -143,12 +143,19 @@ add_library(atlas_nat STATIC
 target_include_directories(atlas_nat PUBLIC include src)
 target_link_libraries(atlas_nat PUBLIC atlas_packet atlas_ipv4 spdlog::spdlog)
 
+add_library(atlas_icmp STATIC
+    include/atlas/icmp/icmp.hpp
+    src/icmp/icmp.cpp
+)
+target_include_directories(atlas_icmp PUBLIC include src)
+target_link_libraries(atlas_icmp PUBLIC atlas_packet)
+
 add_library(atlas_forwarding STATIC
     include/atlas/forwarding/forwarding.hpp
     src/forwarding/forwarding.cpp
 )
 target_include_directories(atlas_forwarding PUBLIC include src)
-target_link_libraries(atlas_forwarding PUBLIC atlas_packet atlas_ethernet atlas_ipv4 atlas_routing atlas_arp atlas_interfaces atlas_firewall atlas_nat spdlog::spdlog)
+target_link_libraries(atlas_forwarding PUBLIC atlas_packet atlas_ethernet atlas_ipv4 atlas_routing atlas_arp atlas_interfaces atlas_firewall atlas_nat atlas_icmp spdlog::spdlog)
 
 # Main Executable Target
 add_executable(atlas src/main.cpp)
@@ -162,6 +169,7 @@ target_link_libraries(atlas PRIVATE
     atlas_arp
     atlas_firewall
     atlas_nat
+    atlas_icmp
     atlas_forwarding
     spdlog::spdlog
 )
@@ -177,6 +185,7 @@ add_executable(atlas_tests
     tests/unit/test_arp.cpp
     tests/unit/test_firewall.cpp
     tests/unit/test_nat.cpp
+    tests/unit/test_icmp.cpp
     tests/unit/test_forwarding.cpp
 )
 target_link_libraries(atlas_tests PRIVATE
@@ -189,6 +198,7 @@ target_link_libraries(atlas_tests PRIVATE
     atlas_arp
     atlas_firewall
     atlas_nat
+    atlas_icmp
     atlas_forwarding
     gtest
     gtest_main

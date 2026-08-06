@@ -28,13 +28,20 @@ Current Codebase Status: **Phase 4 (Hardening & Verification) Completed**
 - [x] Set up LLVMFuzzer parser targets for Ethernet, IPv4, and ARP (`tests/fuzz/`).
 - [x] Enable ASan / AddressSanitizer build options in CMake.
 
+### Phase 5 — Control Plane Engine — **[COMPLETED]**
+- [x] Implement `icmp` protocol module (`include/atlas/icmp/icmp.hpp`, `src/icmp/icmp.cpp`).
+- [x] ICMP Echo Request / Reply ping handler for local router IPs.
+- [x] ICMP Time Exceeded (Type 11, Code 0) generation when TTL expires.
+- [x] ICMP Destination Unreachable (Type 3) error generation.
+- [x] GoogleTest functional test suite (`tests/unit/test_icmp.cpp`).
+
 ---
 
 ## Testing Strategy
 
 ### 1. Unit Tests (`tests/unit/`, GoogleTest)
 - Pure functional test cases using hand-crafted byte arrays (`std::array<std::byte, N>`).
-- Test suites active: `ConfigTest`, `EthernetTest`, `IPv4Test`, `RoutingTest`, `ArpTest`, `FirewallTest`, `NatTest`, `ForwardingTest` (18 tests passing).
+- Test suites active: `ConfigTest`, `EthernetTest`, `IPv4Test`, `RoutingTest`, `ArpTest`, `FirewallTest`, `NatTest`, `IcmpTest`, `ForwardingTest` (21 tests passing).
 
 ### 2. Integration Tests (`tests/integration/`, GoogleTest)
 - Multi-interface topology testing using `FakeInterface` pairs.

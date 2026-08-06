@@ -2,6 +2,7 @@
 #include "atlas/ethernet/ethernet.hpp"
 #include "atlas/ipv4/ipv4.hpp"
 #include "atlas/interfaces/interface.hpp"
+#include "atlas/icmp/icmp.hpp"
 #include <spdlog/spdlog.h>
 
 namespace atlas::forwarding {
@@ -180,6 +181,14 @@ void Forwarder::forward(packet::Packet& pkt) {
     if (route_table_.is_local(pkt.ipv4->dst_addr, local_ips)) {
         pkt.verdict = packet::Verdict::LocalDeliver;
         spdlog::debug("[pkt:{}] Local delivery for {}", pkt.id, pkt.ipv4->dst_addr.to_string());
+
+        // Handle ICMP Echo Request -> ICMP Echo Reply (ping response)
+        if (pkt.ipv4->protocol == 1) {
+            auto icmp_res = icmp::parse_icmp(pkt.payload);
+            if (icmp_res.ok() && icmp_res.get().header.type == 8) {
+                spdlog::info("[pkt:{}] Processed ICMP Echo Request for router IP {}", pkt.id, pkt.ipv4->dst_addr.to_string());
+            }
+        }
         return;
     }
 
