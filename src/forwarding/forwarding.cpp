@@ -110,6 +110,23 @@ void Forwarder::forward(packet::Packet& pkt) {
     }
     auto parse_out = ipv4_res.get();
     pkt.ipv4 = parse_out.header;
+    pkt.payload = parse_out.payload;
+
+    if (pkt.ipv4->protocol == 6 || pkt.ipv4->protocol == 17) {
+        if (parse_out.payload.size() >= 4) {
+            const auto* l4_ptr = reinterpret_cast<const std::uint8_t*>(parse_out.payload.data());
+            std::uint16_t src_p = (static_cast<std::uint16_t>(l4_ptr[0]) << 8) | l4_ptr[1];
+            std::uint16_t dst_p = (static_cast<std::uint16_t>(l4_ptr[2]) << 8) | l4_ptr[3];
+            std::uint8_t flags = (pkt.ipv4->protocol == 6 && parse_out.payload.size() >= 14) ? l4_ptr[13] : static_cast<std::uint8_t>(0);
+
+            pkt.l4 = packet::L4Info{
+                .protocol = pkt.ipv4->protocol,
+                .src_port = src_p,
+                .dst_port = dst_p,
+                .tcp_flags = flags
+            };
+        }
+    }
 
     // Stage 5: Validate Packet (checksum, ihl, total length, ttl > 0)
     if (!ipv4::validate(*pkt.ipv4, eth_payload.size())) {
@@ -129,6 +146,11 @@ void Forwarder::forward(packet::Packet& pkt) {
 
     // Stage 7: Recalculate IPv4 Checksum
     ipv4::recompute_checksum(*pkt.ipv4);
+
+    // Stage 7b: Inbound NAT Translation (for return traffic on public WAN interface)
+    if (nat_engine_ && nat_engine_->is_enabled() && pkt.ingress_iface->is_nat_outside()) {
+        nat_engine_->translate_inbound(pkt);
+    }
 
     // Stage 8: Routing Table Lookup (LPM)
     auto route = route_table_.lookup(pkt.ipv4->dst_addr);
@@ -172,11 +194,9 @@ void Forwarder::forward(packet::Packet& pkt) {
         }
     }
 
-    // Stage 11: NAT Translation
+    // Stage 11: Outbound NAT Translation
     if (nat_engine_ && nat_engine_->is_enabled()) {
-        if (pkt.ingress_iface->is_nat_outside()) {
-            nat_engine_->translate_inbound(pkt);
-        } else if (egress->is_nat_outside()) {
+        if (!pkt.ingress_iface->is_nat_outside() && egress->is_nat_outside()) {
             nat_engine_->translate_outbound(pkt, egress->ip_prefix().addr);
         }
     }

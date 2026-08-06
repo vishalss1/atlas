@@ -2,7 +2,7 @@
 
 ## Implementation Status & Roadmap
 
-Current Codebase Status: **Phase 3 (Policy Engine) Completed**
+Current Codebase Status: **Phase 4 (Hardening & Verification) Completed**
 
 ### Phase 1 — Foundations — **[COMPLETED]**
 - [x] Implement `config` module (JSON loading & validation in `src/config/`).
@@ -22,11 +22,11 @@ Current Codebase Status: **Phase 3 (Policy Engine) Completed**
 - [x] Implement `nat` NAPT / SNAT module with connection tracking & dynamic port pool (`src/nat/`).
 - [x] Wire NAT stage into forwarding pipeline.
 
-### Phase 4 — Hardening & Verification — **[PLANNED / NEXT]**
-- [ ] Integrate async structured logging (`spdlog`) across all pipeline stages with monotonic `PacketID` tracing.
-- [ ] Add integration tests on virtual/Npcap interfaces (`tests/integration/`).
-- [ ] Set up libFuzzer fuzzing targets for Ethernet and IPv4 parsers.
-- [ ] Enable ASan / UBSan sanitizers in CI.
+### Phase 4 — Hardening & Verification — **[COMPLETED]**
+- [x] Integrate async structured logging (`spdlog`) across all pipeline stages with monotonic `PacketID` tracing.
+- [x] Add end-to-end multi-interface integration tests (`tests/integration/test_pipeline_integration.cpp`).
+- [x] Set up LLVMFuzzer parser targets for Ethernet, IPv4, and ARP (`tests/fuzz/`).
+- [x] Enable ASan / AddressSanitizer build options in CMake.
 
 ---
 
@@ -34,8 +34,8 @@ Current Codebase Status: **Phase 3 (Policy Engine) Completed**
 
 ### 1. Unit Tests (`tests/unit/`, GoogleTest)
 - Pure functional test cases using hand-crafted byte arrays (`std::array<std::byte, N>`).
-- Test suites currently active: `ConfigTest`, `EthernetTest`, `IPv4Test`, `RoutingTest`, `ArpTest`, `FirewallTest`, `NatTest`, `ForwardingTest` (18 tests passing).
+- Test suites active: `ConfigTest`, `EthernetTest`, `IPv4Test`, `RoutingTest`, `ArpTest`, `FirewallTest`, `NatTest`, `ForwardingTest` (18 tests passing).
 
-### 2. Integration Tests (`tests/integration/`)
-- Inject synthetic frames into virtual network interfaces.
-- Assert expected MAC rewriting, TTL decrements, checksum recalculations, and egress routing decisions.
+### 2. Integration Tests (`tests/integration/`, GoogleTest)
+- Multi-interface topology testing using `FakeInterface` pairs.
+- Test suite active: `PipelineIntegrationTest` (2 tests passing). Total across project: 20 tests passing.

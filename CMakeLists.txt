@@ -6,6 +6,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(ATLAS_ENABLE_ASAN "Enable AddressSanitizer" OFF)
+option(ATLAS_ENABLE_FUZZING "Enable parser fuzzing targets" OFF)
+
+if(ATLAS_ENABLE_ASAN)
+    if(MSVC)
+        add_compile_options(/fsanitize=address)
+    else()
+        add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+        add_link_options(-fsanitize=address)
+    endif()
+endif()
+
 # MSVC compiler flags
 if(MSVC)
     add_compile_options(/W4 /permissive- /utf-8 /EHsc /FS)
@@ -184,4 +196,36 @@ target_link_libraries(atlas_tests PRIVATE
 
 include(GoogleTest)
 gtest_discover_tests(atlas_tests)
+
+# Integration Tests Target
+add_executable(atlas_integration_tests
+    tests/integration/test_pipeline_integration.cpp
+)
+target_link_libraries(atlas_integration_tests PRIVATE
+    atlas_packet
+    atlas_config
+    atlas_ethernet
+    atlas_ipv4
+    atlas_interfaces
+    atlas_routing
+    atlas_arp
+    atlas_firewall
+    atlas_nat
+    atlas_forwarding
+    gtest
+    gtest_main
+)
+gtest_discover_tests(atlas_integration_tests)
+
+# Parser Fuzzing Targets
+if(ATLAS_ENABLE_FUZZING)
+    add_executable(fuzz_ethernet tests/fuzz/fuzz_ethernet.cpp)
+    target_link_libraries(fuzz_ethernet PRIVATE atlas_ethernet)
+
+    add_executable(fuzz_ipv4 tests/fuzz/fuzz_ipv4.cpp)
+    target_link_libraries(fuzz_ipv4 PRIVATE atlas_ipv4)
+
+    add_executable(fuzz_arp tests/fuzz/fuzz_arp.cpp)
+    target_link_libraries(fuzz_arp PRIVATE atlas_arp)
+endif()
 
