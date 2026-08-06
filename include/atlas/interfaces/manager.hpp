@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include "interface.hpp"
+#include "atlas/interfaces/interface.hpp"
 
 namespace atlas::interfaces {
 

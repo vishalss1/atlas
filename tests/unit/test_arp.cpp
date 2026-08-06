@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "arp/arp.hpp"
-#include "arp/cache.hpp"
+#include "atlas/arp/arp.hpp"
+#include "atlas/arp/cache.hpp"
 
 using namespace atlas::arp;
 using namespace atlas::packet;

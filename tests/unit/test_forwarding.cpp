@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "forwarding/forwarding.hpp"
-#include "interfaces/interface.hpp"
-#include "ethernet/ethernet.hpp"
-#include "ipv4/ipv4.hpp"
+#include "atlas/forwarding/forwarding.hpp"
+#include "atlas/interfaces/interface.hpp"
+#include "atlas/ethernet/ethernet.hpp"
+#include "atlas/ipv4/ipv4.hpp"
 
 using namespace atlas;
 

@@ -1,4 +1,4 @@
-#include "interface.hpp"
+#include "atlas/interfaces/interface.hpp"
 
 namespace atlas::interfaces {
 

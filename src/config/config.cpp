@@ -1,4 +1,4 @@
-#include "config.hpp"
+#include "atlas/config/config.hpp"
 #include <fstream>
 #include <stdexcept>
 #include <nlohmann/json.hpp>

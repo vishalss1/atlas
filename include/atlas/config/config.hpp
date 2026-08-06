@@ -4,7 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <cstdint>
-#include "packet/address.hpp"
+#include "atlas/packet/address.hpp"
 
 namespace atlas::config {
 

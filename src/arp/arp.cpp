@@ -1,6 +1,6 @@
-#include "arp/arp.hpp"
-#include "ethernet/ethernet.hpp"
-#include "interfaces/interface.hpp"
+#include "atlas/arp/arp.hpp"
+#include "atlas/ethernet/ethernet.hpp"
+#include "atlas/interfaces/interface.hpp"
 #include <cstring>
 #include <winsock2.h>
 

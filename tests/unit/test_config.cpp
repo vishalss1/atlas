@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <fstream>
-#include "config/config.hpp"
+#include "atlas/config/config.hpp"
 
 TEST(ConfigTest, LoadValidConfig) {
     const std::string test_config = R"({

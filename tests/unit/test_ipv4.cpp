@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "ipv4/ipv4.hpp"
+#include "atlas/ipv4/ipv4.hpp"
 
 using namespace atlas;
 

@@ -4,9 +4,9 @@
 #include <cstdint>
 #include <span>
 #include <string>
-#include "packet/address.hpp"
-#include "packet/packet.hpp"
-#include "packet/result.hpp"
+#include "atlas/packet/address.hpp"
+#include "atlas/packet/packet.hpp"
+#include "atlas/packet/result.hpp"
 
 namespace atlas::ipv4 {
 

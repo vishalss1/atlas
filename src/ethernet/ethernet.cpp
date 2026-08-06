@@ -1,4 +1,4 @@
-#include "ethernet.hpp"
+#include "atlas/ethernet/ethernet.hpp"
 #include <cstring>
 
 namespace atlas::ethernet {

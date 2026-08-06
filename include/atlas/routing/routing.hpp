@@ -3,7 +3,7 @@
 #include <vector>
 #include <optional>
 #include <string>
-#include "packet/address.hpp"
+#include "atlas/packet/address.hpp"
 
 namespace atlas::routing {
 

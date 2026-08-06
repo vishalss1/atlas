@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "ethernet/ethernet.hpp"
+#include "atlas/ethernet/ethernet.hpp"
 
 using namespace atlas;
 

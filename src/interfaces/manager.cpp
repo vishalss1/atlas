@@ -1,4 +1,4 @@
-#include "manager.hpp"
+#include "atlas/interfaces/manager.hpp"
 #include <algorithm>
 
 namespace atlas::interfaces {

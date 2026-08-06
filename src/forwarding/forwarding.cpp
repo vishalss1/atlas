@@ -1,7 +1,7 @@
-#include "forwarding/forwarding.hpp"
-#include "ethernet/ethernet.hpp"
-#include "ipv4/ipv4.hpp"
-#include "interfaces/interface.hpp"
+#include "atlas/forwarding/forwarding.hpp"
+#include "atlas/ethernet/ethernet.hpp"
+#include "atlas/ipv4/ipv4.hpp"
+#include "atlas/interfaces/interface.hpp"
 #include <spdlog/spdlog.h>
 
 namespace atlas::forwarding {
@@ -161,8 +161,25 @@ void Forwarder::forward(packet::Packet& pkt) {
         return;
     }
 
-    // Stage 10: Firewall Evaluation (default allow in Phase 2)
-    // Stage 11: NAT Translation (default pass in Phase 2)
+    // Stage 10: Firewall Evaluation
+    if (firewall_) {
+        firewall::Direction f_dir = egress->is_nat_outside() ? firewall::Direction::Out : firewall::Direction::In;
+        if (firewall_->evaluate(pkt, f_dir) == firewall::Action::Drop) {
+            pkt.verdict = packet::Verdict::Drop;
+            pkt.drop_reason = "Firewall policy drop";
+            spdlog::info("[pkt:{}] Dropped by firewall policy", pkt.id);
+            return;
+        }
+    }
+
+    // Stage 11: NAT Translation
+    if (nat_engine_ && nat_engine_->is_enabled()) {
+        if (pkt.ingress_iface->is_nat_outside()) {
+            nat_engine_->translate_inbound(pkt);
+        } else if (egress->is_nat_outside()) {
+            nat_engine_->translate_outbound(pkt, egress->ip_prefix().addr);
+        }
+    }
 
     // Stage 12: ARP Resolution
     auto arp_res = arp_engine_.resolve(pkt.next_hop, pkt);
@@ -176,11 +193,19 @@ void Forwarder::forward(packet::Packet& pkt) {
 
     // Stage 13: Build Outgoing Ethernet Frame
     std::vector<std::byte> updated_payload(eth_payload.begin(), eth_payload.end());
-    if (pkt.ipv4 && updated_payload.size() >= 12) {
+    if (pkt.ipv4 && updated_payload.size() >= 20) {
         auto* raw_ipv4 = reinterpret_cast<std::uint8_t*>(updated_payload.data());
         raw_ipv4[8] = pkt.ipv4->ttl;
         raw_ipv4[10] = static_cast<std::uint8_t>((pkt.ipv4->checksum >> 8) & 0xFF);
         raw_ipv4[11] = static_cast<std::uint8_t>(pkt.ipv4->checksum & 0xFF);
+        raw_ipv4[12] = static_cast<std::uint8_t>((pkt.ipv4->src_addr.value >> 24) & 0xFF);
+        raw_ipv4[13] = static_cast<std::uint8_t>((pkt.ipv4->src_addr.value >> 16) & 0xFF);
+        raw_ipv4[14] = static_cast<std::uint8_t>((pkt.ipv4->src_addr.value >> 8) & 0xFF);
+        raw_ipv4[15] = static_cast<std::uint8_t>(pkt.ipv4->src_addr.value & 0xFF);
+        raw_ipv4[16] = static_cast<std::uint8_t>((pkt.ipv4->dst_addr.value >> 24) & 0xFF);
+        raw_ipv4[17] = static_cast<std::uint8_t>((pkt.ipv4->dst_addr.value >> 16) & 0xFF);
+        raw_ipv4[18] = static_cast<std::uint8_t>((pkt.ipv4->dst_addr.value >> 8) & 0xFF);
+        raw_ipv4[19] = static_cast<std::uint8_t>(pkt.ipv4->dst_addr.value & 0xFF);
     }
 
     auto outgoing_frame = ethernet::build(

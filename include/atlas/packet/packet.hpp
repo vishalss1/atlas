@@ -6,7 +6,7 @@
 #include <optional>
 #include <chrono>
 #include <string>
-#include "address.hpp"
+#include "atlas/packet/address.hpp"
 
 namespace atlas::interfaces {
 class Interface;

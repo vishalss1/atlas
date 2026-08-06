@@ -6,7 +6,7 @@
 #include <optional>
 #include <queue>
 #include <mutex>
-#include "packet/address.hpp"
+#include "atlas/packet/address.hpp"
 
 namespace atlas::interfaces {
 

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "routing/routing.hpp"
+#include "atlas/routing/routing.hpp"
 
 using namespace atlas::routing;
 using namespace atlas::packet;

@@ -2,10 +2,12 @@
 
 #include <atomic>
 #include <vector>
-#include "packet/packet.hpp"
-#include "routing/routing.hpp"
-#include "arp/arp.hpp"
-#include "interfaces/manager.hpp"
+#include "atlas/packet/packet.hpp"
+#include "atlas/routing/routing.hpp"
+#include "atlas/arp/arp.hpp"
+#include "atlas/interfaces/manager.hpp"
+#include "atlas/firewall/firewall.hpp"
+#include "atlas/nat/nat.hpp"
 
 namespace atlas::forwarding {
 
@@ -14,10 +16,14 @@ public:
     Forwarder(
         routing::RouteTable& route_table,
         arp::ArpEngine& arp_engine,
-        interfaces::InterfaceManager& iface_manager
+        interfaces::InterfaceManager& iface_manager,
+        firewall::Firewall* firewall = nullptr,
+        nat::NatEngine* nat_engine = nullptr
     ) : route_table_(route_table),
         arp_engine_(arp_engine),
-        iface_manager_(iface_manager) {}
+        iface_manager_(iface_manager),
+        firewall_(firewall),
+        nat_engine_(nat_engine) {}
 
     // Orchestrates the 14-stage non-throwing packet pipeline
     void forward(packet::Packet& pkt);
@@ -30,6 +36,8 @@ private:
     routing::RouteTable& route_table_;
     arp::ArpEngine& arp_engine_;
     interfaces::InterfaceManager& iface_manager_;
+    firewall::Firewall* firewall_{nullptr};
+    nat::NatEngine* nat_engine_{nullptr};
     std::atomic<packet::PacketID> next_packet_id_{1};
 };
 
