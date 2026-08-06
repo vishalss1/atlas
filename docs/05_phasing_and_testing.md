@@ -11,12 +11,12 @@ Current Codebase Status: **Phase 1 (Foundations) Completed**
 - [x] Implement `ipv4` header parser, checksum calculation, and TTL management with GoogleTest suite (`src/ipv4/`).
 - [x] Implement `interfaces` abstraction wrapping raw packet handles (`src/interfaces/`).
 
-### Phase 2 — Forwarding Core — **[IN PROGRESS]**
-- [ ] Implement `routing` table with Longest Prefix Match (LPM) scanning (`src/routing/`).
-- [ ] Implement `arp` engine (cache management, request generation, pending packet queues in `src/arp/`).
-- [ ] Wire basic `forwarding` pipeline: `Ethernet -> IPv4 -> Routing -> ARP -> Ethernet Build -> Transmit` (`src/forwarding/`).
+### Phase 2 — Forwarding Core — **[COMPLETED]**
+- [x] Implement `routing` table with Longest Prefix Match (LPM) scanning (`src/routing/`).
+- [x] Implement `arp` engine (cache management, request generation, pending packet queues in `src/arp/`).
+- [x] Wire basic `forwarding` pipeline: `Ethernet -> IPv4 -> Routing -> ARP -> Ethernet Build -> Transmit` (`src/forwarding/`).
 
-### Phase 3 — Policy Engine — **[PLANNED]**
+### Phase 3 — Policy Engine — **[PLANNED / NEXT]**
 - [ ] Implement `firewall` 5-tuple stateless filtering rules (`src/firewall/`).
 - [ ] Wire firewall stage into forwarding pipeline.
 - [ ] Implement `nat` NAPT / SNAT module with connection tracking & dynamic port pool (`src/nat/`).

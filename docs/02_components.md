@@ -42,7 +42,7 @@ This document describes the responsibilities, design decisions, and current impl
 
 ---
 
-## 5. ARP Engine (`src/arp/`) — **[STATUS: SPECIFIED / PHASE 2 IN PROGRESS]**
+## 5. ARP Engine (`src/arp/`) — **[STATUS: IMPLEMENTED - Phase 2]**
 - **Responsibility:** Resolve IPv4 address to MAC address; manage ARP request/reply lifecycle and ARP cache.
 - **Key Components:**
   - Cache: `unordered_map<Ipv4Addr, ArpEntry>` with mutex protection.
@@ -52,7 +52,7 @@ This document describes the responsibilities, design decisions, and current impl
 
 ---
 
-## 6. Routing Engine (`src/routing/`) — **[STATUS: SPECIFIED / PHASE 2 IN PROGRESS]**
+## 6. Routing Engine (`src/routing/`) — **[STATUS: IMPLEMENTED - Phase 2]**
 - **Responsibility:** Maintain routing table; perform Longest Prefix Match (LPM); select egress interface and next hop IP.
 - **Key Components:** `RouteTable`, `Route` (prefix, gateway, interface name).
 - **Behavior:**
@@ -61,22 +61,22 @@ This document describes the responsibilities, design decisions, and current impl
 
 ---
 
-## 7. Firewall (`src/firewall/`) — **[STATUS: SPECIFIED / PHASE 3 PLANNED]**
+## 7. Packet Forwarder (`src/forwarding/`) — **[STATUS: IMPLEMENTED - Phase 2]**
+- **Responsibility:** Composition root orchestrating the 14-stage forwarding pipeline.
+- **Behavior:** Accepts incoming packet context, invokes pipeline stages sequentially, hands off final payload to the target interface.
+
+---
+
+## 8. Firewall (`src/firewall/`) — **[STATUS: SPECIFIED / PHASE 3 PLANNED]**
 - **Responsibility:** Stateless packet filtering based on 5-tuple rules.
 - **Key Components:** `RuleSet`, `Rule` (Action: Allow/Drop; Direction: In/Out; Src/Dst IP prefixes; Port ranges).
 - **Behavior:** Top-down first-match rule evaluation. Default policy is **DROP** (fail closed).
 
 ---
 
-## 8. NAT Engine (`src/nat/`) — **[STATUS: SPECIFIED / PHASE 3 PLANNED]**
+## 9. NAT Engine (`src/nat/`) — **[STATUS: SPECIFIED / PHASE 3 PLANNED]**
 - **Responsibility:** Network Address Port Translation (NAPT / Source NAT).
 - **Key Components:**
   - `SessionTable`: Keyed bi-directionally for inbound and outbound traffic.
   - Port Pool: Range `[1024, 65535]` for dynamic port allocation.
 - **Behavior:** Applies on outbound packets exiting `nat_outside: true` interfaces; rewrites IP and L4 (TCP/UDP) ports, recomputing header and L4 checksums.
-
----
-
-## 9. Packet Forwarder (`src/forwarding/`) — **[STATUS: SPECIFIED / PHASE 2 IN PROGRESS]**
-- **Responsibility:** Composition root orchestrating the 14-stage forwarding pipeline.
-- **Behavior:** Accepts incoming packet context, invokes pipeline stages sequentially, hands off final payload to the target interface.

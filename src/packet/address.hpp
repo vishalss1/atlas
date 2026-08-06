@@ -106,3 +106,23 @@ struct Ipv4Prefix {
 };
 
 } // namespace atlas::packet
+
+namespace std {
+template <>
+struct hash<atlas::packet::Ipv4Addr> {
+    std::size_t operator()(const atlas::packet::Ipv4Addr& addr) const noexcept {
+        return std::hash<std::uint32_t>{}(addr.value);
+    }
+};
+
+template <>
+struct hash<atlas::packet::MacAddr> {
+    std::size_t operator()(const atlas::packet::MacAddr& mac) const noexcept {
+        std::size_t h = 0;
+        for (auto b : mac.bytes) {
+            h = (h * 31) + static_cast<std::size_t>(b);
+        }
+        return h;
+    }
+};
+} // namespace std

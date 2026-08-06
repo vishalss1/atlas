@@ -119,9 +119,9 @@ Every raw frame entering an Atlas network interface is assigned a monotonic `Pac
 | **Interface Manager** | `src/interfaces/` | **Phase 1 Complete** | Npcap `pcap_t*` handle wrapper with RAII cleanup and Windows IP Helper binding. |
 | **Ethernet Layer** | `src/ethernet/` | **Phase 1 Complete** | Parses and constructs Ethernet II frames (`0x0800` IPv4, `0x0806` ARP). |
 | **IPv4 Engine** | `src/ipv4/` | **Phase 1 Complete** | Header parsing, 16-bit Internet Checksum validation, TTL decrementing, and fragment rejection. |
-| **Routing Engine** | `src/routing/` | Phase 2 (In Progress) | Routing table maintaining IPv4 prefixes, gateway IPs, and Longest Prefix Match (LPM) scanning. |
-| **ARP Engine** | `src/arp/` | Phase 2 (In Progress) | IPv4-to-MAC resolution with thread-safe ARP cache (300s TTL) and pending request queues. |
-| **Packet Forwarder** | `src/forwarding/` | Phase 2 (In Progress) | Central composition root driving the 14-stage non-throwing pipeline. |
+| **Routing Engine** | `src/routing/` | **Phase 2 Complete** | Routing table maintaining IPv4 prefixes, gateway IPs, and Longest Prefix Match (LPM) scanning. |
+| **ARP Engine** | `src/arp/` | **Phase 2 Complete** | IPv4-to-MAC resolution with thread-safe ARP cache (300s TTL) and pending request queues. |
+| **Packet Forwarder** | `src/forwarding/` | **Phase 2 Complete** | Central composition root driving the 14-stage non-throwing pipeline. |
 | **Firewall** | `src/firewall/` | Phase 3 (Planned) | 5-tuple stateless packet filtering engine (default policy: `DROP`). |
 | **NAT Engine** | `src/nat/` | Phase 3 (Planned) | NAPT / SNAT session tracking, port allocation (`1024-65535`), and L4 checksum recomputation. |
 
@@ -323,8 +323,8 @@ Atlas uses a multi-tiered testing methodology:
 ## Implementation Roadmap
 
 - [x] **Phase 1: Foundations (COMPLETED)** — Core packet types (`src/packet/`), `Result<T, E>` monad, JSON configuration parser & validator (`src/config/`), Ethernet II parser/builder (`src/ethernet/`), IPv4 engine with checksum & TTL (`src/ipv4/`), interface abstraction (`src/interfaces/`).
-- [ ] **Phase 2: Forwarding Core (IN PROGRESS)** — Longest Prefix Match (LPM) routing engine (`src/routing/`), thread-safe ARP cache & queueing (`src/arp/`), 14-stage forwarding pipeline integration (`src/forwarding/`).
-- [ ] **Phase 3: Policy Engine (PLANNED)** — 5-tuple stateless firewall filtering (`src/firewall/`), NAPT / Source NAT with connection tracking and L4 checksum rewriting (`src/nat/`).
+- [x] **Phase 2: Forwarding Core (COMPLETED)** — Longest Prefix Match (LPM) routing engine (`src/routing/`), thread-safe ARP cache & queueing (`src/arp/`), 14-stage forwarding pipeline integration (`src/forwarding/`).
+- [ ] **Phase 3: Policy Engine (PLANNED / NEXT)** — 5-tuple stateless firewall filtering (`src/firewall/`), NAPT / Source NAT with connection tracking and L4 checksum rewriting (`src/nat/`).
 - [ ] **Phase 4: Hardening & Verification (PLANNED)** — High-volume synthetic frame integration tests, LLVM parser fuzzing, ASan/UBSan CI pipelines.
 - [ ] **Future Milestones** — ICMP echo/time-exceeded handlers, stateful firewall conntrack integration, multi-threaded worker loop, IPv6 support.
 

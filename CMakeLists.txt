@@ -8,7 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # MSVC compiler flags
 if(MSVC)
-    add_compile_options(/W4 /permissive- /utf-8 /EHsc)
+    add_compile_options(/W4 /permissive- /utf-8 /EHsc /FS)
     add_compile_options($<$<CONFIG:Debug>:/Zi>)
     add_compile_options($<$<CONFIG:Release>:/O2>)
 else()
@@ -101,6 +101,29 @@ add_library(atlas_interfaces STATIC
 target_include_directories(atlas_interfaces PUBLIC src include)
 target_link_libraries(atlas_interfaces PUBLIC atlas_packet)
 
+add_library(atlas_routing STATIC
+    src/routing/routing.hpp
+    src/routing/routing.cpp
+)
+target_include_directories(atlas_routing PUBLIC src include)
+target_link_libraries(atlas_routing PUBLIC atlas_packet)
+
+add_library(atlas_arp STATIC
+    src/arp/cache.hpp
+    src/arp/cache.cpp
+    src/arp/arp.hpp
+    src/arp/arp.cpp
+)
+target_include_directories(atlas_arp PUBLIC src include)
+target_link_libraries(atlas_arp PUBLIC atlas_packet atlas_ethernet atlas_interfaces)
+
+add_library(atlas_forwarding STATIC
+    src/forwarding/forwarding.hpp
+    src/forwarding/forwarding.cpp
+)
+target_include_directories(atlas_forwarding PUBLIC src include)
+target_link_libraries(atlas_forwarding PUBLIC atlas_packet atlas_ethernet atlas_ipv4 atlas_routing atlas_arp atlas_interfaces spdlog::spdlog)
+
 # Main Executable Target
 add_executable(atlas src/main.cpp)
 target_link_libraries(atlas PRIVATE
@@ -109,6 +132,9 @@ target_link_libraries(atlas PRIVATE
     atlas_ethernet
     atlas_ipv4
     atlas_interfaces
+    atlas_routing
+    atlas_arp
+    atlas_forwarding
     spdlog::spdlog
 )
 
@@ -119,6 +145,9 @@ add_executable(atlas_tests
     tests/unit/test_config.cpp
     tests/unit/test_ethernet.cpp
     tests/unit/test_ipv4.cpp
+    tests/unit/test_routing.cpp
+    tests/unit/test_arp.cpp
+    tests/unit/test_forwarding.cpp
 )
 target_link_libraries(atlas_tests PRIVATE
     atlas_packet
@@ -126,9 +155,13 @@ target_link_libraries(atlas_tests PRIVATE
     atlas_ethernet
     atlas_ipv4
     atlas_interfaces
+    atlas_routing
+    atlas_arp
+    atlas_forwarding
     gtest
     gtest_main
 )
 
 include(GoogleTest)
 gtest_discover_tests(atlas_tests)
+
